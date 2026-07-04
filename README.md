@@ -39,6 +39,8 @@ Designed for enterprise-grade workflows, the platform emphasizes:
 
 ✅ Executive PDF & Excel Reports
 
+<img width="1917" height="912" alt="Image" src="https://github.com/user-attachments/assets/444f1ac4-7a29-402f-aa03-b850a5e3a0d4" />
+
 ---
 
 # 🏗️ System Architecture
