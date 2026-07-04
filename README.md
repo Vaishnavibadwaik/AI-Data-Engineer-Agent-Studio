@@ -41,6 +41,7 @@ Designed for enterprise-grade workflows, the platform emphasizes:
 
 <img width="1917" height="912" alt="Image" src="https://github.com/user-attachments/assets/444f1ac4-7a29-402f-aa03-b850a5e3a0d4" />
 
+<img width="1911" height="912" alt="Image" src="https://github.com/user-attachments/assets/76b4a0ba-40ac-4c6f-8243-5da9270567e0" />
 ---
 
 # 🏗️ System Architecture
