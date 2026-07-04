@@ -1,167 +1,572 @@
-# AI Data Engineering Agent Studio
+# 🚀 AI Data Engineering Agent Studio
 
-A production-ready, local, offline-capable AI Data Engineering Agent Studio built for the **Kaggle AI Agents: Intensive Vibe Coding Capstone Project (Agents for Business Track)**. 
+<div align="center">
 
-The studio implements a multi-agent orchestration architecture coupled with Model Context Protocol (MCP) tool integrations, strict enterprise security guardrails, data quality scorers, ETL clean pipelines, natural language query interfaces, and professional report generators.
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-Web%20App-FF4B4B?style=for-the-badge&logo=streamlit)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)
+![MCP](https://img.shields.io/badge/Model%20Context%20Protocol-MCP-green?style=for-the-badge)
+![Offline](https://img.shields.io/badge/Offline-Ready-success?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)
+
+### 🏆 Kaggle AI Agents – Intensive Vibe Coding Capstone Project (Agents for Business Track)
+
+*A Production-Ready Multi-Agent AI Data Engineering Platform powered by Model Context Protocol (MCP), Enterprise Security Guardrails, Intelligent ETL Pipelines, SQL Analytics, Interactive Dashboards, and Executive Report Generation.*
 
 ---
 
-## 🏗️ System Architecture
+## 🌟 Project Overview
 
-The studio operates on a true multi-agent network, where each agent acts independently, communicating via standard **Model Context Protocol (MCP)** tool interfaces coordinated by the central **Orchestrator Agent**.
+AI Data Engineering Agent Studio is a **fully local, offline-capable, production-style AI platform** that automates the complete data engineering workflow using a collaborative **Multi-Agent Architecture**.
+
+Instead of relying on a single AI model, specialized agents independently perform data ingestion, quality assessment, ETL transformations, SQL analytics, dashboard generation, and professional reporting while communicating through the **Model Context Protocol (MCP)**.
+
+Designed for enterprise-grade workflows, the platform emphasizes:
+
+✅ Modular Multi-Agent Design
+
+✅ Local & Offline Execution
+
+✅ Secure MCP Tool Communication
+
+✅ Automated ETL Pipelines
+
+✅ Data Quality Assessment
+
+✅ Natural Language SQL Analytics
+
+✅ Business Intelligence Dashboard
+
+✅ Executive PDF & Excel Reports
+
+---
+
+# 🏗️ System Architecture
 
 ```mermaid
 graph TD
-    User([Streamlit GUI app.py]) <--> Orchestrator[Orchestrator Agent agents/orchestrator.py]
-    Orchestrator <-->|MCP Protocol stdio JSON-RPC| MCPServer[MCP Server mcp_server/server.py]
-    
-    subgraph Agents Network
-        MCPServer <--> LoaderAgent[Data Loader Agent agents/loader_agent.py]
-        MCPServer <--> QualityAgent[Data Quality Agent agents/quality_agent.py]
-        MCPServer <--> ETLAgent[ETL Agent agents/etl_agent.py]
-        MCPServer <--> SQLAgent[SQL Analytics Agent agents/sql_agent.py]
-        MCPServer <--> DashAgent[Dashboard Agent agents/dashboard_agent.py]
+    User([Streamlit GUI]) <--> Orchestrator[Orchestrator Agent]
+
+    Orchestrator <-->|MCP JSON-RPC| MCP[MCP Server]
+
+    subgraph Agent Network
+        MCP --> Loader[Data Loader Agent]
+        MCP --> Quality[Data Quality Agent]
+        MCP --> ETL[ETL Agent]
+        MCP --> SQL[SQL Analytics Agent]
+        MCP --> Dashboard[Dashboard Agent]
     end
 
-    SQLAgent <---> SQLiteDB[(SQLite Database data/agent_studio.db)]
-    DashAgent ---> ChartOutputs[Matplotlib / Seaborn Charts]
-    Orchestrator ---> ReportOutputs[PDF / Excel / JSON Executive Reports]
+    SQL --> SQLite[(SQLite Database)]
+
+    Dashboard --> Charts[Business Charts]
+
+    Orchestrator --> Reports[PDF / Excel / JSON Reports]
 ```
 
-### File Structure
+---
+
+# 📂 Project Structure
+
 ```text
-project_root/
-├── agents/
-│   ├── __init__.py
-│   ├── orchestrator.py      # Coordinating pipeline workflow and state
-│   ├── loader_agent.py      # Schema discovery and metadata loader
-│   ├── quality_agent.py     # Outlier, duplicate, format and null checkers
-│   ├── etl_agent.py         # Imputing, deduplicating, name formatting
-│   └── dashboard_agent.py   # Statistical KPIs, Seaborn plotting, recommendations
+AI-Data-Engineering-Agent-Studio/
 │
-├── tools/
-│   ├── __init__.py
-│   ├── data_tools.py        # File, path, and SQL security guardrails
-│   └── reporting_tools.py   # PDF (ReportLab), Excel (openpyxl) compilers
+├── agents/
+│   ├── orchestrator.py
+│   ├── loader_agent.py
+│   ├── quality_agent.py
+│   ├── etl_agent.py
+│   ├── sql_agent.py
+│   └── dashboard_agent.py
 │
 ├── mcp_server/
-│   └── server.py            # Local MCP Server exposing the 7 core tools
+│   └── server.py
 │
-├── data/                    # SQLite database and dataset CSV files
+├── tools/
+│   ├── data_tools.py
+│   └── reporting_tools.py
 │
-├── reports/                 # Executive PDF, Excel sheets and JSON reports
+├── data/
 │
-├── logs/                    # Audit and system logs
+├── reports/
 │
-├── app.py                   # Streamlit Frontend GUI
-├── requirements.txt         # Open-source package requirements
-├── README.md                # System documentation
-└── .gitignore               # Ignored cache/database files
+├── logs/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## 🤖 Agent Roles & Responsibilities
+# 🤖 Multi-Agent Architecture
 
-### 1. Orchestrator Agent (`agents/orchestrator.py`)
-* Coordinates the sequential execution of agents (Loading -> Quality -> ETL -> SQL/Dashboard -> Report).
-* Manages execution state logs in the live console window.
-* Routes inputs/outputs between components.
-* Initiates fallbacks and handles errors gracefully.
+## 🎯 Orchestrator Agent
 
-### 2. Data Loader Agent (`agents/loader_agent.py`)
-* Loads CSV, Excel, and JSON files securely.
-* Performs schema discovery, profiles columns, counts rows/cells, and extracts metadata.
+Acts as the brain of the system.
 
-### 3. Data Quality Agent (`agents/quality_agent.py`)
-* Checks completeness (null distributions), uniqueness (duplicate counts), numerical outliers (IQR method), and emails formatting.
-* Computes an overall composite **Data Quality Score (0-100%)**.
+Responsible for:
 
-### 4. ETL Agent (`agents/etl_agent.py`)
-* Sanitizes column headers to clean snake_case.
-* Deduplicates datasets, cleans currency formatting, and casts datetime columns.
-* Imputes missing numeric values (mean/median/mode/zero) and categorical cells.
-
-### 5. SQL Analytics Agent (`agents/sql_agent.py`)
-* Translates natural language prompts to SQLite queries (via local Ollama or high-speed rule-based Heuristics).
-* Safely runs read-only analytical queries against the registered tables.
-* Maintains a permanent, audit-ready SQL execution query history log.
-
-### 6. Dashboard Agent (`agents/dashboard_agent.py`)
-* Generates statistical business KPIs (averages, distributions, dominant categories).
-* Generates charts (frequency bar, monthly trends line, categorical pie, histogram, correlation heatmap).
-* Compiles dynamic business recommendations based on anomalies and statistical correlations.
+- Coordinating every agent
+- Pipeline execution
+- State management
+- Error handling
+- Logging
+- Report generation
 
 ---
 
-## 🔌 Model Context Protocol (MCP) Server
+## 📥 Data Loader Agent
 
-The local MCP Server (`mcp_server/server.py`) exposes seven standard, reusable tools that agents invoke for all core operations:
+Responsibilities
 
-1. `load_dataset(filepath)`: Securely ingests raw dataset and returns dimensions.
-2. `dataset_summary(filepath)`: Extracts schema data types and unique counts.
-3. `quality_check(filepath)`: Audits files for outliers, nulls, duplicates.
-4. `clean_dataset(filepath, operations_json)`: Executes ETL pipeline transformations.
-5. `run_sql_query(query, filepath)`: Translates natural language, executes safe SQL on SQLite.
-6. `generate_dashboard(filepath)`: Generates KPIs, exports Seaborn charts, compiles recommendations.
-7. `export_report(metadata, quality, etl, insights, charts)`: Compiles audit files into PDF and Excel reports.
-
----
-
-## 🛡️ Enterprise Security Guardrails
-
-The application prioritizes robust security, validating inputs before any operation:
-
-* **File Type Validation**: Rejects unsupported file structures. Only CSV, Excel, and JSON are allowed.
-* **File Size Constraints**: Prevents denial of service by rejecting uploads larger than 100MB.
-* **Path Traversal Protection**: Resolves all relative file paths, blocking access to directories outside the project workspace.
-* **SQL Injection Prevention**: Blocks malicious keywords (`DROP`, `DELETE`, `TRUNCATE`, `ALTER`, `UPDATE`, `INSERT`, etc.) case-insensitively using exact-word boundary matching.
-* **Strict Read-Only Enforcement**: Ensures only safe queries (`SELECT`, `WITH`, `EXPLAIN`, `PRAGMA table_info`) are executed.
-* **Traceable Auditing**: Maintains detailed execution history logs inside `logs/audit.log`.
+- Load CSV
+- Load Excel
+- Load JSON
+- Detect schema
+- Extract metadata
+- Register datasets
 
 ---
 
-## ⚙️ Offline Heuristic Fallback System
+## 🔍 Data Quality Agent
 
-To satisfy cost constraints (100% free) and run offline without complex local LLM installations, the studio includes a **dual-mode intelligence engine**:
+Performs enterprise-quality validation.
 
-* **Ollama Mode**: If Ollama is running on localhost (`http://localhost:11434`), the studio connects to active models like `qwen2.5-coder` or `llama3` for SQL generation and consultative recommendations.
-* **Rule-Based Heuristic Mode**: If Ollama is offline or uninstalled, the studio automatically switches to a custom NLP heuristic compiler. This compiler matches query entities with SQL structures (e.g., matching aggregates like "average sales" to `AVG(sales_amount)`, grouping keywords like "by product" to `GROUP BY product_category`, and sorting keys like "top 10" to `ORDER BY value DESC LIMIT 10`), ensuring the studio remains functional out of the box.
+Checks:
 
----
+- Missing values
+- Duplicate records
+- Outliers (IQR)
+- Invalid formats
+- Email validation
+- Column statistics
 
-## 🚀 Installation & Setup
+Outputs
 
-1. **Clone the project repository** to your local workspace.
-2. **Install Python dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. *(Optional)* **Configure Ollama for LLM Translation**:
-   * Install [Ollama](https://ollama.com).
-   * Pull your preferred coder models:
-     ```bash
-     ollama pull qwen2.5-coder
-     ollama pull llama3
-     ```
-   * Ensure Ollama is running locally on your default port (`http://localhost:11434`).
-4. **Launch the Streamlit GUI Application**:
-   ```bash
-   streamlit run app.py
-   ```
+- Data Quality Score (0–100%)
+- Detailed quality report
 
 ---
 
-## 📊 Verification Walkthrough
+## ⚙️ ETL Agent
 
-1. Open the application in your browser.
-2. In the sidebar control panel, click **Load Pre-defined Messy Sales CSV** (which reads `data/sample_sales.csv`).
-3. Check the **Ingestion & Quality** tab to inspect the raw file size, missing value metrics, IQR outliers, and format issues.
-4. Click **Run End-to-End Pipeline 🚀** in the sidebar to execute the loaders, data quality scorers, ETL cleanings, Seaborn plotters, and report compilers.
-5. In the **ETL Pipeline** tab, download the newly cleaned CSV and check the transformation logs.
-6. In the **SQL Query Studio**, type your analytical queries (e.g., `show total sales amount by product category`).
-7. Enter a malicious query like `DROP TABLE dataset;` or `SELECT * FROM dataset; DROP TABLE dataset;` to verify that the security guards immediately block the execution.
-8. Go to the **Analytics Dashboard** to see KPI cards, insights, and visualizations.
-9. Go to the **Executive Audit Log** tab to inspect logs and download the compiled report files.
-#   A I - D a t a - E n g i n e e r - A g e n t - S t u d i o  
- 
+Automatically cleans datasets.
+
+Operations include
+
+- Rename columns
+- Convert to snake_case
+- Remove duplicates
+- Handle null values
+- Format currencies
+- Convert datetime
+- Normalize text
+- Standardize columns
+
+---
+
+## 🧠 SQL Analytics Agent
+
+Supports Natural Language Analytics.
+
+Examples
+
+> Show total sales by category
+
+> Top 10 customers
+
+> Monthly revenue trend
+
+> Average order value
+
+The agent converts prompts into optimized SQLite queries using
+
+- Ollama LLM (if available)
+
+OR
+
+- Rule-Based SQL Compiler (Offline)
+
+---
+
+## 📊 Dashboard Agent
+
+Automatically generates
+
+- KPI Cards
+- Category Analysis
+- Histograms
+- Pie Charts
+- Bar Charts
+- Correlation Heatmaps
+- Trend Analysis
+- Business Recommendations
+
+---
+
+# 🔌 MCP Server
+
+Every agent communicates through the local **Model Context Protocol (MCP)** server.
+
+Available MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| load_dataset() | Load datasets securely |
+| dataset_summary() | Profile dataset |
+| quality_check() | Run quality assessment |
+| clean_dataset() | Execute ETL operations |
+| run_sql_query() | Safe SQL analytics |
+| generate_dashboard() | Create KPIs & Charts |
+| export_report() | Generate PDF & Excel reports |
+
+---
+
+# 🛡️ Enterprise Security Features
+
+Security is built into every layer.
+
+### ✅ File Validation
+
+- CSV
+- Excel
+- JSON only
+
+---
+
+### ✅ File Size Protection
+
+Maximum upload size
+
+**100 MB**
+
+---
+
+### ✅ Path Traversal Protection
+
+Blocks access outside project workspace.
+
+---
+
+### ✅ SQL Injection Prevention
+
+Dangerous SQL commands are rejected.
+
+Blocked keywords include
+
+- DROP
+- DELETE
+- UPDATE
+- ALTER
+- INSERT
+- TRUNCATE
+
+---
+
+### ✅ Read-Only SQL Execution
+
+Only safe commands are allowed
+
+- SELECT
+- WITH
+- EXPLAIN
+- PRAGMA
+
+---
+
+### ✅ Audit Logging
+
+Every operation is recorded inside
+
+```
+logs/audit.log
+```
+
+---
+
+# 🧠 Offline AI Intelligence
+
+The platform includes a dual-engine AI system.
+
+## Option 1 — Ollama
+
+Uses local LLMs like
+
+- qwen2.5-coder
+- llama3
+
+for
+
+- SQL Generation
+- Business Recommendations
+- NLP Query Translation
+
+---
+
+## Option 2 — Rule-Based Engine
+
+Works without internet or LLM.
+
+Automatically understands queries such as
+
+> Average Sales
+
+> Top Products
+
+> Monthly Revenue
+
+> Sales by Category
+
+using intelligent heuristic parsing.
+
+---
+
+# 📊 End-to-End Pipeline
+
+```text
+Dataset
+     │
+     ▼
+Load Dataset
+     │
+     ▼
+Schema Discovery
+     │
+     ▼
+Quality Assessment
+     │
+     ▼
+ETL Cleaning
+     │
+     ▼
+SQLite Registration
+     │
+     ▼
+Natural Language SQL
+     │
+     ▼
+Business Dashboard
+     │
+     ▼
+Executive Reports
+```
+
+---
+
+# 🚀 Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/yourusername/AI-Data-Engineering-Agent-Studio.git
+
+cd AI-Data-Engineering-Agent-Studio
+```
+
+---
+
+## Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## (Optional) Install Ollama
+
+```bash
+ollama pull qwen2.5-coder
+
+ollama pull llama3
+```
+
+Run Ollama
+
+```bash
+ollama serve
+```
+
+---
+
+## Launch Streamlit
+
+```bash
+streamlit run app.py
+```
+
+---
+
+# 📈 Application Workflow
+
+### Step 1
+
+Load sample dataset
+
+```
+data/sample_sales.csv
+```
+
+---
+
+### Step 2
+
+Inspect
+
+- Schema
+- Missing Values
+- Outliers
+- Quality Score
+
+---
+
+### Step 3
+
+Run
+
+```
+End-to-End Pipeline
+```
+
+---
+
+### Step 4
+
+Automatically execute
+
+- Data Cleaning
+- ETL
+- SQL Registration
+- Dashboard Generation
+- Report Compilation
+
+---
+
+### Step 5
+
+Run Natural Language SQL
+
+Example
+
+```text
+show total sales amount by category
+```
+
+---
+
+### Step 6
+
+View
+
+- Dashboard
+- Charts
+- KPIs
+- Business Insights
+
+---
+
+### Step 7
+
+Download
+
+- Clean CSV
+- Excel Report
+- PDF Report
+- JSON Audit
+
+---
+
+# 📸 Features
+
+✅ Multi-Agent AI Architecture
+
+✅ Model Context Protocol (MCP)
+
+✅ Enterprise Security
+
+✅ Offline Support
+
+✅ Ollama Integration
+
+✅ Automated ETL
+
+✅ SQL Analytics
+
+✅ Interactive Dashboard
+
+✅ PDF Reports
+
+✅ Excel Reports
+
+✅ SQLite Database
+
+✅ Business KPIs
+
+✅ Data Quality Score
+
+✅ Audit Logs
+
+---
+
+# 🛠️ Technology Stack
+
+| Category | Technologies |
+|-----------|--------------|
+| Language | Python |
+| UI | Streamlit |
+| Database | SQLite |
+| Charts | Matplotlib, Seaborn |
+| Reports | ReportLab, OpenPyXL |
+| Data | Pandas, NumPy |
+| AI | Ollama |
+| Protocol | MCP |
+| Logging | Python Logging |
+| Security | Custom Guardrails |
+
+---
+
+# 🎯 Future Improvements
+
+- Multi-file ingestion
+- PostgreSQL support
+- DuckDB integration
+- Apache Spark connector
+- Cloud deployment
+- Scheduled pipelines
+- AI Data Catalog
+- RAG-based Documentation Search
+- Vector Database Integration
+- Multi-user Authentication
+
+---
+
+# 🏆 Why This Project?
+
+This project demonstrates modern AI Data Engineering concepts including:
+
+- Multi-Agent Systems
+- Model Context Protocol (MCP)
+- Enterprise Data Engineering
+- Automated ETL Pipelines
+- Business Intelligence
+- Secure SQL Analytics
+- Offline AI Workflows
+- Production Software Architecture
+
+It is an ideal portfolio project showcasing practical skills in AI Engineering, Data Engineering, and Enterprise Software Development.
+
+---
+
+# 👩‍💻 Author
+
+**Vaishnavi Badwaik**
+
+MCA Student • AI Engineer • Data Engineer • Machine Learning Enthusiast
+
+---
+
+## ⭐ If you found this project useful, consider giving it a Star!
+
+**Made with ❤️ using Python, Streamlit, MCP, and AI Agents.**
